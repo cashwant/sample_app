@@ -26,6 +26,8 @@ group :test do
 	gem 'guard-spork', '1.5.0'
 	gem 'childprocess', '0.3.6'
 	gem 'factory_girl_rails', '4.2.1'
+	gem 'cucumber-rails', '1.4.0', :require => false
+	gem 'database_cleaner', github: 'bmabey/database_cleaner'
 end
 
 # Use SCSS for stylesheets
