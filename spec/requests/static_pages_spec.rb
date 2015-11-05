@@ -15,6 +15,44 @@ describe "Static Pages" do
 
     it_should_behave_like "all static pages"
     it { should_not have_title('| Home') }
+
+    describe "for signed-in users" do
+      let(:user) { FactoryGirl.create(:user) }
+      let(:another) { FactoryGirl.create(:user) }
+      describe "single micropost" do
+        before do
+          FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+          FactoryGirl.create(:micropost, user: another, content: "Dolor sit amet")
+          sign_in user
+          visit root_path
+        end
+
+        it "should have singular form" do
+          expect(page).to have_content("1 micropost")
+        end
+
+        it { should_not have_link('delete', href: micropost_path(another.microposts)) }
+      end
+
+      describe "multiple microposts" do
+        before do
+          FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+          FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+          sign_in user
+          visit root_path
+        end
+
+        it "should render the user's feed" do
+          user.feed.each do |item|
+            expect(page).to have_selector("li##{item.id}", text: item.content)
+          end
+        end
+
+        it "should have plural form" do
+          expect(page).to have_content("2 microposts")
+        end
+      end
+    end
   end
 
   describe "Help page" do
